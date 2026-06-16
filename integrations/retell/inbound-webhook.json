@@ -1,0 +1,33 @@
+{
+  "_comment": "Retell call_inbound webhook. In the Retell dashboard, set your agent's inbound webhook URL to the value below (the ?key= carries your API key, since Retell may not send custom auth headers — use a dedicated, rotatable key). On each inbound call Retell POSTs the request shape and uses the dynamic_variables you return as {{var}} substitutions in the agent prompt. The endpoint ALWAYS returns 200 (fail-open) so a slow lookup never drops the call.",
+  "webhook_url": "https://numbers.online/api/v1/integrations/retell/inbound?key=YOUR_API_KEY",
+  "example_request_from_retell": {
+    "event": "call_inbound",
+    "event_timestamp": 1780012672105,
+    "call_inbound": {
+      "agent_id": "agent_12345",
+      "from_number": "+14155552671",
+      "to_number": "+14155550100"
+    }
+  },
+  "example_response_you_return": {
+    "call_inbound": {
+      "dynamic_variables": {
+        "caller_valid": "true",
+        "caller_name": "ACME CORP",
+        "caller_line_type": "mobile",
+        "caller_spam_score": "12",
+        "caller_risk": "low",
+        "caller_on_dnc": "unknown",
+        "caller_reassigned": "unknown",
+        "caller_signal": "supplementary"
+      },
+      "metadata": {
+        "provider": "numbers.online",
+        "receipt_id": "nol_rec_8sd91kfh20aJ",
+        "checked_at": "2026-06-03T12:00:00.000Z"
+      }
+    }
+  },
+  "prompt_usage_example": "If {{caller_risk}} is high or {{caller_on_dnc}} is listed, take extra care; this is a supplementary signal, not a verdict — you keep the decision."
+}

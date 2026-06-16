@@ -1,0 +1,10 @@
+{
+  "_comment": "Register Numbers Online as an MCP tool on a Vapi assistant. Replace YOUR_API_KEY with a key that has the 'mcp' use case. Vapi auto-discovers phone_lookup, line_type, caller_risk, dnc_check, reassigned_check via tools/list. metadata.protocol MUST be 'shttp' (Streamable HTTP) — not 'streamable-http'.",
+  "type": "mcp",
+  "function": { "name": "mcpTools" },
+  "server": {
+    "url": "https://numbers.online/api/v1/mcp",
+    "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+  },
+  "metadata": { "protocol": "shttp" }
+}

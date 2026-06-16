@@ -1,0 +1,13 @@
+# Registry-publish secrets — NEVER commit these.
+key.pem
+*.pem
+.mcpregistry_*
+
+# Operator-only handoff (submission drafts, internal checklist).
+SUBMISSIONS.md
+
+# OS / editor noise.
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc

@@ -1,0 +1,19 @@
+{
+  "_comment": "Vapi CUSTOM (function) tool, an alternative to the MCP server for operators who prefer a function tool. Add this to your assistant's tools. Vapi POSTs {message:{type:'tool-calls', toolCallList:[{id, arguments:{number}}]}} to server.url and expects {results:[{toolCallId, result}]}. Replace YOUR_API_KEY with a key that has the 'mcp' use case.",
+  "type": "function",
+  "function": {
+    "name": "phone_lookup",
+    "description": "Look up a phone number and return a supplementary, low-confidence intelligence bundle (validity, line type, carrier, country, caller name where available, a spam signal, and DNC / reassigned status). Advisory only — keep the routing decision.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "number": { "type": "string", "description": "Phone number in E.164, e.g. +14155552671" }
+      },
+      "required": ["number"]
+    }
+  },
+  "server": {
+    "url": "https://numbers.online/api/v1/integrations/vapi/tool",
+    "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+  }
+}

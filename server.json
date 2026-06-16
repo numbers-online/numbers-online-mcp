@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "online.numbers/numbers-online",
+  "title": "Numbers Online — phone intelligence",
+  "description": "Read-only phone intelligence for AI voice agents — line type, risk, DNC, signed receipts.",
+  "version": "1.0.0",
+  "websiteUrl": "https://numbers.online/docs/integrations",
+  "repository": {
+    "url": "https://github.com/numbers-online/numbers-online-mcp",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://numbers.online/api/v1/mcp"
+    }
+  ]
+}
