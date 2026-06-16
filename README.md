@@ -17,26 +17,29 @@ number one to think twice about dialing* — **before** it burns agent minutes.
 
 ## Tools
 
-Five **read-only** tools (all annotated `readOnlyHint`, `idempotentHint`). Discover them
+Four **read-only** tools (all annotated `readOnlyHint`, `idempotentHint`). Discover them
 live with `tools/list` (no auth required).
 
 | Tool | Returns | Billed |
 |---|---|---|
-| `phone_lookup` | Full bundle — validity, formatting, line type, range carrier, country, caller name (CNAM where available), STIR/SHAKEN verstat, a labeled spam signal, DNC + reassigned status, signed receipt | bundled per-call |
-| `caller_risk` | Spam signal + verstat + DNC + reassigned status + receipt (no name dip) | bundled per-call |
+| `phone_lookup` | Full bundle — validity, formatting, line type, range carrier, country, caller name (CNAM where available), STIR/SHAKEN verstat, a labeled spam signal, first-party DNC signal, signed receipt | bundled per-call |
+| `caller_risk` | Spam signal + verstat + first-party DNC signal + receipt (no name dip) | bundled per-call |
 | `line_type` | Deterministic only — validity, line type (mobile / fixed line / VoIP / …), carrier, country, formatting | free |
 | `dnc_check` | First-party do-not-contact signal + signed receipt | free |
-| `reassigned_check` | First-party reassigned-number signal + signed receipt | free |
 
-### About the DNC / reassigned signal
+### About the DNC signal
 
-`dnc_status` and `reassigned_status` are **first-party, consent-first** signals: they
-reflect a do-not-contact preference **registered and verified by the number's own owner**
-inside Numbers Online. They are **not** a copy, mirror, or replica of any government or
-official do-not-call registry. A number returns a status once its owner has registered
-one; otherwise the honest answer is **`unknown`** — no record on file for that number.
-Treat it as a supplementary input to your own TCPA process, never a verdict that a call
-is lawful.
+The DNC signal is **first-party, consent-first**: it reflects a do-not-contact preference
+**registered and verified by the number's own owner** inside Numbers Online. It is **not**
+a copy, mirror, or replica of any government or licensed do-not-call registry. The values:
+
+- **`SUPPRESS`** — the owner registered a do-not-contact preference for this channel.
+- **`NO_MATCH`** — no suppression preference on record (absence of suppression is **not** consent).
+- **`UNKNOWN`** — the number couldn't be evaluated.
+
+Treat it as a supplementary input to your own TCPA process, never a verdict that a call is
+lawful. (Reassigned-number status is inherently a carrier/FCC dataset and is intentionally
+**not** offered as a first-party signal — there's no `reassigned_check` tool.)
 
 ---
 
@@ -123,8 +126,8 @@ read-only and stateless. Privacy policy: https://numbers.online/privacy
 ## Pricing
 
 The full bundle is metered as one bundled per-call dip (validation + line type + risk +
-DNC + reassigned in a single call). `line_type`, `dnc_check`, and `reassigned_check` are
-free. See https://numbers.online for current rates.
+first-party DNC in a single call). `line_type` and `dnc_check` are free. See
+https://numbers.online for current rates.
 
 ---
 

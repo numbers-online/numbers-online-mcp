@@ -29,11 +29,10 @@ It speaks JSON-RPC 2.0 (`initialize` / `notifications/initialized` / `ping` /
 
 | Tool | Returns | Billed |
 |---|---|---|
-| `phone_lookup` | full bundle: validity, formatting, line type, range carrier, country, caller name (CNAM where available), verstat, spam signal, DNC + reassigned status, signed receipt | bundled per-call |
-| `caller_risk` | spam signal + verstat + DNC + reassigned + receipt (no name dip) | bundled per-call |
+| `phone_lookup` | full bundle: validity, formatting, line type, range carrier, country, caller name (CNAM where available), verstat, spam signal, first-party DNC signal, signed receipt | bundled per-call |
+| `caller_risk` | spam signal + verstat + first-party DNC signal + receipt (no name dip) | bundled per-call |
 | `line_type` | deterministic: validity, line type, carrier, country, formatting | free |
 | `dnc_check` | first-party do-not-contact signal + signed receipt | free |
-| `reassigned_check` | first-party reassigned-number signal + signed receipt | free |
 
 `tools/call` requires a valid `mcp`-scoped key (fail-closed). `initialize`, `ping`, and
 `tools/list` are public capability discovery. Every billable call meters the bundled
@@ -41,14 +40,16 @@ It speaks JSON-RPC 2.0 (`initialize` / `notifications/initialized` / `ping` /
 live call). A hard latency backstop keeps responses well under Vapi's 7.5s
 assistant-request budget, degrading to a neutral "no signal" result rather than stalling.
 
-### The DNC / reassigned signal is first-party
+### The DNC signal is first-party
 
-`dnc_status` and `reassigned_status` reflect a do-not-contact preference **registered and
-verified by the number's own owner** inside Numbers Online — a consent-first, first-party
-signal. They are **not** a copy, mirror, or replica of any government or official
-do-not-call registry. A number returns a status once its owner has registered one;
-otherwise the value is **`unknown`** (no record on file for that number). It is a
-supplementary input to your own TCPA process, never a verdict that a call is lawful.
+`dnc_status` reflects a do-not-contact preference **registered and verified by the
+number's own owner** inside Numbers Online — a consent-first, first-party signal. It is
+**not** a copy, mirror, or replica of any government or licensed do-not-call registry.
+Values: **`SUPPRESS`** (owner asked not to be contacted), **`NO_MATCH`** (no suppression
+preference on record — absence of suppression is not consent), **`UNKNOWN`** (number
+couldn't be evaluated). It is a supplementary input to your own TCPA process, never a
+verdict that a call is lawful. There is no reassigned-number tool — reassignment is
+inherently a carrier/FCC dataset, not a first-party signal.
 
 ### Register in Vapi
 
@@ -112,7 +113,7 @@ dynamic variables for the agent prompt:
       "caller_line_type": "mobile",
       "caller_spam_score": "12",
       "caller_risk": "low",
-      "caller_on_dnc": "unknown",
+      "caller_on_dnc": "no_match",
       "caller_reassigned": "unknown",
       "caller_signal": "supplementary"
     },
@@ -171,7 +172,7 @@ number.
 
 - Any key already entitled to `lookup` also has the `mcp` use case; new keys get it by
   default.
-- The bundled per-call rate is metered only for valid, non-suppressed numbers; `line_type`,
-  `dnc_check`, and `reassigned_check` are free.
+- The bundled per-call rate is metered only for valid, non-suppressed numbers; `line_type`
+  and `dnc_check` are free.
 - MSPs: mint a per-tenant sub-key so agent usage rolls up per customer on one prepaid
   balance, and per-tenant suppression lists apply to agent lookups too.
